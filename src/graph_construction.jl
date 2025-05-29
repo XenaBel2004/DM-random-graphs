@@ -9,30 +9,30 @@ begin
 	# src/graph_construction.jl
 	using Graphs
 	
-	function build_knn_graph(data::Vector{<:Real}, k::Int)
-	    n = length(data)
+	function build_knn_graph(data, k)
+		n = length(data)
 	    g = SimpleGraph(n)
-	    for i in 1:n
-	        distances = [(j, abs(data[i] - data[j])) for j in 1:n if j != i]
-	        nearest = sort(distances, by = x -> x[2])[1:k]
-	        for (j, _) in nearest
-	            add_edge!(g, i, j)
-	        end
-	    end
+		for i in 1:n
+			distances = [(j, abs(data[i] - data[j])) for j in 1:n if j != i]
+		    nearest = sort(distances, by=x->x[2])[1:k]
+		    for (j, _) in nearest
+		        add_edge!(g, i, j)
+		    end
+		end
 	    return g
 	end
 	
-	function build_distance_graph(data::Vector{<:Real}, d::Float64)
+	function build_distance_graph(data::Vector{Float64}, d::Float64)
 	    n = length(data)
-	    g = SimpleGraph(n)
-	    for i in 1:n-1
-	        for j in i+1:n
-	            if abs(data[i] - data[j]) <= d
-	                add_edge!(g, i, j)
-	            end
+	    dist_graph = SimpleGraph(n)
+	    
+	    for i in 1:n, j in 1:n
+	        if i != j && abs(data[i] - data[j]) ≤ d
+	            add_edge!(dist_graph, i, j)
 	        end
 	    end
-	    return g
+		
+	    return dist_graph
 	end
 end
 
